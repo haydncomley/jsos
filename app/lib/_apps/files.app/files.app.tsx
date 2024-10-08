@@ -22,9 +22,13 @@ export const FilesApp = ({
         return Object.values(currentFolder.data) as FileSystemItem[];
     }, [currentPath, filesystem])
 
+    const getFilePath = (item: FileSystemItem) => {
+        return `${currentPath}/${item.id}`
+    }
+
     const doActionOnFile = (item: FileSystemItem) => {
         if (IsFileSystemItemAFolder(item)) {
-            setCurrentPath(`${currentPath}/${item.id}`)
+            setCurrentPath(getFilePath(item))
             setCurrentFile(undefined);
             return;
         }
@@ -127,7 +131,7 @@ export const FilesApp = ({
                         <p>{ currentFile.id }</p>
                         { IsFileSystemItemAnImage(currentFile) ? (
                             <button onClick={() => {
-                                preferences.desktop.setBackgroundImage(currentFile)
+                                preferences.desktop.setBackgroundImage(getFilePath(currentFile))
                             }}>Set as wallpaper</button>
                         ) : null }
                         { IsFileSystemItemAnApplication(currentFile) ? (
@@ -136,7 +140,7 @@ export const FilesApp = ({
                             }}>Launch {currentFile.name} App</button>
                         ) : null }
                         <button onClick={() => {
-                                filesystem.set(`/${currentDirPaths.join('/')}/${currentFile.id}`, undefined)
+                                filesystem.set(getFilePath(currentFile), undefined)
                             }}>Delete</button>
                     </div>
                 ) : null }

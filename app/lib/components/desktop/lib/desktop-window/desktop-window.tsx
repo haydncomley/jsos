@@ -2,6 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useContext, useEffect, useMemo, useRef } from 'react';
 import styles from './desktop-window.module.scss';
+import { useOnDragWindow } from './lib/useOnDragWindow';
 import { useOnDrag } from '~/lib/hooks/useOnDrag';
 import classNames from 'classnames';
 import { SystemSettingsContext } from '~/lib/contexts/system-settings.context';
@@ -16,45 +17,84 @@ interface DesktopWindowProps {
 export const DesktopWindow = ({
     windowId
 }: DesktopWindowProps) => {
-    const { windows, processes, activeWindowId, focusWindow, openProcess } = useContext(SystemSettingsContext)
+    const {
+        windows,
+        processes,
+        activeWindowId,
+        focusWindow,
+        openProcess,
+        setWindowPosition,
+        setWindowSizeAndPosition,
+    } = useContext(SystemSettingsContext)
     const fileSystemApi = useContext(FileSystemContext)
     const userPreferencesApi = useContext(UserPreferencesContext)
+
     const appWindow = windows.find(window => window.id === windowId)!;
+    const process = processes.find(process => process.id === appWindow.processId)!;
+
     const windowRef = useRef<HTMLDivElement>(null);
-    const { isDragging } = useOnDrag(windowRef, (left, top) => {
+    const windowCornerTopLeftRef = useRef<HTMLDivElement>(null);
+    const windowCornerTopRightRef = useRef<HTMLDivElement>(null);
+    const windowCornerBottomRightRef = useRef<HTMLDivElement>(null);
+    const windowCornerBottomLeftRef = useRef<HTMLDivElement>(null);
+
+    const { isDragging } = useOnDragWindow(windowRef, (left, top) => {
         windowRef.current!.style.left = `${left}px`;
         windowRef.current!.style.top = `${top}px`;
+        setWindowPosition(appWindow.id, left, top);
     })
 
+    const savePos = () => {
+        if (!windowRef.current) return;
+        const left = parseInt(windowRef.current.style.left);
+        const top = parseInt(windowRef.current.style.top);
+        const width = parseInt(windowRef.current.style.width);
+        const height = parseInt(windowRef.current.style.height);
+        setWindowSizeAndPosition(appWindow.id, left, top, width, height);
+    }
+
+    useOnDrag(windowCornerTopLeftRef, (l,t,left, top) => {
+        if (!windowRef.current) return;
+        windowRef.current.style.top = `${parseInt(windowRef.current.style.top) - top}px`;
+        windowRef.current.style.left = `${parseInt(windowRef.current.style.left) - left}px`;
+        windowRef.current.style.width = `${parseInt(windowRef.current.style.width) + left}px`;
+        windowRef.current.style.height = `${parseInt(windowRef.current.style.height) + top}px`;
+    }, savePos);
+
+    useOnDrag(windowCornerTopRightRef, (l,t,left, top) => {
+        if (!windowRef.current) return;
+        windowRef.current.style.top = `${parseInt(windowRef.current.style.top) - top}px`;
+        windowRef.current.style.width = `${parseInt(windowRef.current.style.width) - left}px`;
+        windowRef.current.style.height = `${parseInt(windowRef.current.style.height) + top}px`;
+    }, savePos);
+
+    useOnDrag(windowCornerBottomRightRef, (l,t,left, top) => {
+        if (!windowRef.current) return;
+        windowRef.current.style.width = `${parseInt(windowRef.current.style.width) - left}px`;
+        windowRef.current.style.height = `${parseInt(windowRef.current.style.height) - top}px`;
+    }, savePos);
+
+    useOnDrag(windowCornerBottomLeftRef, (l,t,left, top) => {
+        if (!windowRef.current) return;
+        windowRef.current.style.left = `${parseInt(windowRef.current.style.left) - left}px`;
+        windowRef.current.style.width = `${parseInt(windowRef.current.style.width) + left}px`;
+        windowRef.current.style.height = `${parseInt(windowRef.current.style.height) - top}px`;
+    }, savePos);
+
     useEffect(() => {
-        if (windowRef.current) {
+        if (!windowRef.current) return
+        windowRef.current.style.zIndex = `${appWindow.zIndex}`;
+            
+        if (!process?.application.settings?.wrap) {
             windowRef.current.style.left = `${appWindow.left}px`;
             windowRef.current.style.top = `${appWindow.top}px`;
             windowRef.current.style.width = `${appWindow.width}px`;
             windowRef.current.style.height = `${appWindow.height}px`;
         }
-
-        let lastScreenWidth = window.innerWidth;
-
-        const onResize = () => {
-            if (!windowRef.current) return;
-            console.log('resize');
-            const delta = window.innerWidth - lastScreenWidth;
-            windowRef.current.style.width = `${parseInt(windowRef.current.style.width) + delta}px`; 
-            lastScreenWidth = window.innerWidth;
-        }
-
-        window.addEventListener('resize', onResize);
-
-        return () => {
-            window.removeEventListener('resize', onResize);
-        }
-    }, [appWindow.left, appWindow.top, appWindow.width, appWindow.height])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [appWindow.left, appWindow.top, appWindow.width, appWindow.height, appWindow.zIndex])
 
     const renderWindowContent = useMemo(() => {
-        const window = windows.find(window => window.id === windowId);
-        if (!window) return null;
-        const process = processes.find(process => process.id === window.processId);
         if (!process) return null;
         const Component = process.application.data;
         return (
@@ -98,29 +138,33 @@ export const DesktopWindow = ({
                     {renderWindowContent}
                 </div>
 
-                <span data-id="anchor-top-left" className={classNames(
-                    styles.desktopWindowAnchor,
-                    styles.desktopWindowAnchorTop,
-                    styles.desktopWindowAnchorLeft
-                )}/>
+                { !process.application.settings?.wrap ? (
+                    <>
+                        <span ref={windowCornerTopLeftRef} className={classNames(
+                            styles.desktopWindowAnchor,
+                            styles.desktopWindowAnchorTop,
+                            styles.desktopWindowAnchorLeft
+                        )}/>
 
-                <span data-id="anchor-top-right" className={classNames(
-                    styles.desktopWindowAnchor,
-                    styles.desktopWindowAnchorTop,
-                    styles.desktopWindowAnchorRight
-                )}/>
+                        <span ref={windowCornerTopRightRef} className={classNames(
+                            styles.desktopWindowAnchor,
+                            styles.desktopWindowAnchorTop,
+                            styles.desktopWindowAnchorRight
+                        )}/>
 
-                <span data-id="anchor-bottom-right" className={classNames(
-                    styles.desktopWindowAnchor,
-                    styles.desktopWindowAnchorBottom,
-                    styles.desktopWindowAnchorRight
-                )}/>
+                        <span ref={windowCornerBottomRightRef} className={classNames(
+                            styles.desktopWindowAnchor,
+                            styles.desktopWindowAnchorBottom,
+                            styles.desktopWindowAnchorRight
+                        )}/>
 
-                <span data-id="anchor-bottom-left" className={classNames(
-                    styles.desktopWindowAnchor,
-                    styles.desktopWindowAnchorBottom,
-                    styles.desktopWindowAnchorLeft
-                )}/>
+                        <span ref={windowCornerBottomLeftRef} className={classNames(
+                            styles.desktopWindowAnchor,
+                            styles.desktopWindowAnchorBottom,
+                            styles.desktopWindowAnchorLeft
+                        )}/>
+                    </>
+                ) : null }
             </div>
         </div>
     )

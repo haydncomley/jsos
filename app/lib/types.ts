@@ -30,8 +30,8 @@ export interface FileSystemAPI {
 
 export interface UserPreferencesAPI {
     desktop: {
-        backgroundImage?: FileSystemFile;
-        setBackgroundImage: (file: FileSystemFile) => void;
+        backgroundImage?: string;
+        setBackgroundImage: (file: string) => void;
         applications: Application[]
     }
 }
@@ -51,6 +51,7 @@ export interface Application extends FileSystemItem {
     data: (apis: ApplicationProps) => JSX.Element,
     settings?: {
         headless?: boolean,
+        wrap?: boolean
     }
 }
 

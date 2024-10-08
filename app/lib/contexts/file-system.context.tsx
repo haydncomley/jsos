@@ -1,21 +1,21 @@
 import { PropsWithChildren, createContext, useState } from "react";
 import { FileSystemFile, FileSystemAPI, FileSystemItems } from "../types";
 import { GetFileAsFileItemType, IsFileSystemItemAFolder } from "../utils/helpers.utils";
-import { FilesApp } from "../_apps/files.app";
-import { ConsoleApp } from "../_apps/console.app";
+import { DEFAULT_SESSION } from "../data/default-session.data";
+import { DEFAULT_SYSTEM } from "../data/default-system.data";
 
 export const FileSystemContext = createContext<FileSystemAPI>({
-   root: {
-       type: 'folder',
+    root: {
+        type: 'folder',
         id: 'root',
-        name: 'Root',
-        data: {},
+        name: '~',
         icon: '',
-   },
-   set: () => null,
-   get:  () => undefined,
-   exists:  () => false,
-   upload:  () => undefined,
+        data: {},
+    },
+    set: () => null,
+    get:  () => undefined,
+    exists:  () => false,
+    upload:  () => undefined,
    operations: 0,
 });
 
@@ -32,134 +32,14 @@ export const FileSystemProvider = ({ children }: PropsWithChildren<object>) => {
                 id: 'system',
                 name: 'System',
                 icon: '',
-                data: {
-                    applications: {
-                        type: 'folder',
-                        id: 'applications',
-                        name: 'Applications',
-                        icon: '',
-                        data: {
-                            "app-files": {
-                                type: 'application',
-                                id: 'app-files',
-                                name: 'Files',
-                                icon: '/root/system/assets/icon-app-files',
-                                data: FilesApp,
-                            },
-                            "app-console": {
-                                type: 'application',
-                                id: 'app-console',
-                                name: 'Console',
-                            icon: '/root/system/assets/icon-app-console',
-                                data: ConsoleApp,
-                            },
-                        },
-                    },
-                    assets: {
-                        type: 'folder',
-                        id: 'assets',
-                        name: 'Assets',
-                        icon: '',
-                        data: {
-                            "icon-folder": {
-                                type: 'file',
-                                id: 'icon-folder',
-                                name: 'Icon - Folder',
-                                icon: '',
-                                data: '/assets/icon-folder.webp',
-                                fileType: 'image',
-                            },
-                            "icon-file": {
-                                type: 'file',
-                                id: 'icon-file',
-                                name: 'Icon - File',
-                                icon: '',
-                                data: '/assets/icon-file.webp',
-                                fileType: 'image',
-                            },
-                            "icon-app-files": {
-                                type: 'file',
-                                id: 'icon-app-files',
-                                name: 'App Icon - Files',
-                                icon: '',
-                                data: '/assets/icon-app-files.webp',
-                                fileType: 'image',
-                            },
-                            "icon-app-console": {
-                                type: 'file',
-                                id: 'icon-app-console',
-                                name: 'App Icon - Console',
-                                icon: '',
-                                data: '/assets/icon-app-console.webp',
-                                fileType: 'image',
-                            },
-                            "icon-app-web": {
-                                type: 'file',
-                                id: 'icon-app-web',
-                                name: 'App Icon - Web',
-                                icon: '',
-                                data: '/assets/icon-app-web.webp',
-                                fileType: 'image',
-                            },
-                        },
-                    },
-                },
+                data: DEFAULT_SYSTEM,
             },
             session: {
                 type: 'folder',
                 id: 'session',
                 name: 'Session',
                 icon: '',
-                data: {
-                    desktop: {
-                        type: 'folder',
-                        id: 'desktop',
-                        name: 'Desktop',
-                        icon: '',
-                        data: {
-                           "wallpaper": {
-                                type: 'file',
-                                id: 'wallpaper',
-                                name: 'Current Wallpaper',
-                                icon: '',
-                                data: '/assets/background-image-1.webp',
-                                fileType: 'image',
-                            },
-                        },
-                    },
-                    pictures: {
-                        type: 'folder',
-                        id: 'pictures',
-                        name: 'Pictures',
-                        icon: '',
-                        data: {
-                            "wallpaper-red": {
-                                type: 'file',
-                                id: 'wallpaper-red',
-                                name: 'Wallpaper Red',
-                                icon: '',
-                                data: '/assets/background-image-1.webp',
-                                fileType: 'image',
-                            },
-                            "wallpaper-purple": {
-                                type: 'file',
-                                id: 'wallpaper-purple',
-                                name: 'Wallpaper Purple',
-                                icon: '',
-                                data: '/assets/background-image-2.webp',
-                                fileType: 'image',
-                            },
-                            "wallpaper-cloud": {
-                                type: 'file',
-                                id: 'wallpaper-cloud',
-                                name: 'Wallpaper Cloud',
-                                icon: '',
-                                data: '/assets/background-image-3.webp',
-                                fileType: 'image',
-                            },
-                        },
-                    },
-                },
+                data: DEFAULT_SESSION
             },
         },
     });
@@ -246,4 +126,3 @@ export const FileSystemProvider = ({ children }: PropsWithChildren<object>) => {
         </FileSystemContext.Provider>
     )
 };
-// /test/something

@@ -22,9 +22,7 @@ export const useOnDragIcon = (
 
         const handleMouseUp = (e: MouseEvent) => {
             if (isDragging && element.current) {
-                const bounds = element.current.getBoundingClientRect();
-                onMove?.(bounds.left, bounds.top);
-                element.current.style.transform = '';
+                onMove?.(parseInt(element.current.style.gridColumnStart), parseInt(element.current.style.gridRowStart));
                 e.preventDefault();
             }
 
@@ -38,6 +36,7 @@ export const useOnDragIcon = (
             e.preventDefault();
             const dx = e.clientX - startX;
             const dy = e.clientY - startY;
+            const gridSize = 0.5 * 16;
 
             if (!isDragging) {
                 const deltaMagnitude = Math.sqrt(dx * dx + dy * dy);
@@ -48,7 +47,11 @@ export const useOnDragIcon = (
                 return;
             }
 
-            element.current.style.transform = `translate(${dx}px, ${dy}px)`;
+            const iconLeft = e.clientX - (element.current.clientWidth / 2);
+            const iconTop = e.clientY - (element.current.clientHeight / 2);
+
+            element.current.style.gridColumnStart = `${Math.max(Math.round(iconLeft / gridSize), 0)}`;
+            element.current.style.gridRowStart = `${Math.max(Math.round(iconTop / gridSize), 0)}`;
         }
 
         element.current.addEventListener('mousedown', handleMouseDown);

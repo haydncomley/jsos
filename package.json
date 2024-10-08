@@ -1,7 +1,11 @@
 {
   "name": "jsos",
+  "version": "0.1.0",
   "private": true,
   "sideEffects": false,
+  "author": {
+    "name": "Haydn Comley"
+  },
   "type": "module",
   "scripts": {
     "build": "remix vite:build",

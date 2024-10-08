@@ -2,14 +2,11 @@ import { ApplicationProps } from "~/lib/types";
 
 import styles from './console.app.module.scss';
 
-export const ConsoleApp = ({
-    filesystem,
-    preferences,
-    system,
-}: ApplicationProps) => {
+// eslint-disable-next-line no-empty-pattern
+export const ConsoleApp = ({}: ApplicationProps) => {
     return (
         <div className={styles.consoleApp} data-window-drag>
-            Console
+            Console Hello World
         </div>
     );
 }

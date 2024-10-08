@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react"
 
-export const useOnDrag = (
+export const useOnDragWindow = (
     element: React.RefObject<HTMLElement>,
-    onMove: (left: number, top: number, leftDelta: number, topDelta: number) => void,
-    onMoveEnd?: () => void,
+    onMove?: (left: number, top: number) => void
 ) => {
     const [isDragging, setIsDragging] = useState(false);
 
@@ -14,11 +13,11 @@ export const useOnDrag = (
         let isDragging = false;
         let startX = 0;
         let startY = 0;
-        let lastDx = 0;
-        let lastDy = 0;
 
         const handleMouseDown = (e: MouseEvent) => {
-            if (e.target !== element.current) return;
+            const isTargetNotBorder = e.target !== element.current?.firstChild;
+            const isTargetWithinDraggable = element.current?.querySelector('*[data-window-drag="true"]')?.contains(e.target as HTMLElement);
+            if (isTargetNotBorder && !isTargetWithinDraggable) return;
             startX = e.clientX;
             startY = e.clientY;
             isStarting = true;
@@ -26,7 +25,11 @@ export const useOnDrag = (
 
         const handleMouseUp = () => {
             if (isDragging && element.current) {
-                onMoveEnd?.();
+                const bounds = element.current.getBoundingClientRect();
+                element.current.style.left = `${bounds.left}px`;
+                element.current.style.top = `${bounds.top}px`;
+                onMove?.(bounds.left, bounds.top);
+                element.current.style.transform = '';
             }
 
             setIsDragging(false);
@@ -37,10 +40,6 @@ export const useOnDrag = (
         const handleMouseMove = (e: MouseEvent) => {
             const dx = e.clientX - startX;
             const dy = e.clientY - startY;
-            const ddX = lastDx - dx;
-            const ddY = lastDy - dy;
-            lastDx = dx;
-            lastDy = dy;
             if (!isStarting || !element.current) return;
 
             if (!isDragging) {
@@ -52,7 +51,7 @@ export const useOnDrag = (
                 return;
             }
 
-            onMove?.(dx, dy, ddX, ddY);
+            element.current.style.transform = `translate(${dx}px, ${dy}px)`;
         }
 
         element.current.addEventListener('mousedown', handleMouseDown);

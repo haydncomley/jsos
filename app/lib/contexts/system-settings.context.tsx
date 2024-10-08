@@ -12,6 +12,7 @@ interface SystemSettings {
     closeWindow: (windowId: string) => void;
     maximizeWindow: (windowId: string) => void;
     focusWindow: (windowId?: string) => void;
+    setWindowSizeAndPosition: (windowId: string, left: number, top: number, width: number, height: number) => void;
     setWindowPosition: (windowId: string, left: number, top: number) => void;
     setWindowSize: (windowId: string, width: number, height: number) => void;
 }
@@ -25,6 +26,7 @@ export const SystemSettingsContext = createContext<SystemSettings>({
     openWindow: () => {},
     maximizeWindow: () => {},
     focusWindow: () => {},
+    setWindowSizeAndPosition: () => {},
     setWindowPosition: () => {},
     setWindowSize: () => {},
 });
@@ -42,6 +44,8 @@ const getFullscreenBounds = () => {
         height: bounds.height - top - (bounds.height - bottom) - padding,
     }
 }
+
+let zIndexCount = 0;
 
 export const SystemSettingsProvider = ({ children }: PropsWithChildren<object>) => {
     const [ processes, setProcesses ] = useState<SystemSettings['processes']>([]);
@@ -95,7 +99,7 @@ export const SystemSettingsProvider = ({ children }: PropsWithChildren<object>) 
                 height,
                 left: bounds.width / 2 - width / 2,
                 top: bounds.height / 2 - height / 2,
-                zIndex: Date.now()
+                zIndex: zIndexCount++
             }
         ]);
         setActiveWindowId(processId);
@@ -122,26 +126,40 @@ export const SystemSettingsProvider = ({ children }: PropsWithChildren<object>) 
         }
 
         setActiveWindowId(windowId);
-        setWindows(windows.map(window => window.id === windowId ? {
-            ...window,
-            zIndex: Date.now()
-        } : window));
+        setWindows((prev) => {
+            const windowIndex = prev.findIndex((x) => x.id === windowId);
+            prev[windowIndex].zIndex = ++zIndexCount;
+            return prev;
+        });
     }
 
     const setWindowPosition = (windowId: string, left: number, top: number) => {
-        setWindows(windows.map(window => window.id === windowId ? {
-            ...window,
-            left,
-            top
-        } : window));
+        setWindows((prev) => {
+            const windowIndex = prev.findIndex((x) => x.id === windowId);
+            prev[windowIndex].top = top;
+            prev[windowIndex].left = left;
+            return prev;
+        });
     }
 
     const setWindowSize = (windowId: string, width: number, height: number) => {
-        setWindows(windows.map(window => window.id === windowId ? {
-            ...window,
-            width,
-            height
-        } : window));
+        setWindows((prev) => {
+            const windowIndex = prev.findIndex((x) => x.id === windowId);
+            prev[windowIndex].height = height;
+            prev[windowIndex].width = width;
+            return prev;
+        });
+    }
+
+    const setWindowSizeAndPosition = (windowId: string, left: number, top: number, width: number, height: number) => {
+        setWindows((prev) => {
+            const windowIndex = prev.findIndex((x) => x.id === windowId);
+            prev[windowIndex].top = top;
+            prev[windowIndex].left = left;
+            prev[windowIndex].height = height;
+            prev[windowIndex].width = width;
+            return prev;
+        });
     }
 
     
@@ -157,7 +175,8 @@ export const SystemSettingsProvider = ({ children }: PropsWithChildren<object>) 
             maximizeWindow,
             focusWindow,
             setWindowPosition,
-            setWindowSize
+            setWindowSize,
+            setWindowSizeAndPosition,
         }}>
             {children}
         </SystemSettingsContext.Provider>

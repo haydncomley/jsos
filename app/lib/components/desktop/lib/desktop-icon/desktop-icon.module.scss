@@ -7,7 +7,7 @@
         opacity: 0;
     }
     50% {
-        transform: scale(1.1) translateY(0rem);
+        transform: scale(1) translateY(-0.5rem);
         opacity: 1;
     }
     100% {
@@ -31,7 +31,7 @@
     
     &.isInDock {
         padding: 0;
-        animation: iconIn .75s ease backwards;
+        animation: iconIn .5s ease backwards;
         margin-bottom: calc(theme.Variable('gap') * .5);
     }
 

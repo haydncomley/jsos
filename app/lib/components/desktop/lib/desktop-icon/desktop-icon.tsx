@@ -7,7 +7,7 @@ import { FileSystemItem } from "~/lib/types";
 import { AppIcon } from "~/lib/components/app-icon";
 import classNames from "classnames";
 import { SystemSettingsContext } from "~/lib/contexts/system-settings.context";
-import { useOnDragIcon } from "~/lib/hooks/useOnDragIcon";
+import { useOnDragIcon } from "./lib/useOnDragIcon";
 import { IsFileSystemItemAnApplication } from "~/lib/utils/helpers.utils";
 
 interface DesktopIconProps extends PropsWithChildren {
@@ -27,10 +27,9 @@ export const DesktopIcon = ({
     const { openProcess, activeWindowId, processes } = useContext(SystemSettingsContext);
     const iconRef = useRef<HTMLDivElement>(null);
     const { isDragging } = useOnDragIcon(iconRef, (left, top) => {
-        const gridSize = 0.5 * 16;
         setPlacement([
-            Math.max(Math.round(left / gridSize), 0),
-            Math.max(Math.round(top / gridSize), 0),
+            left,
+            top,
         ]);
     });
 

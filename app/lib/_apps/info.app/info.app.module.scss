@@ -1,0 +1,37 @@
+@use "easy-theme" as theme;
+@use "/app/lib/theme/utility" as util;
+
+.infoApp {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: theme.Variable('gap');
+    border-radius: inherit;
+    gap: theme.Variable('gap');
+}
+
+.infoAppTitle {
+    font-size: 1.5rem;
+}
+
+.infoAppVersion {
+    font-size: 0.8rem;
+}
+
+.infoAppLabel {
+    font-size: 0.6rem;
+    opacity: 0.75;
+}
+
+.infoAppCredit {
+    display: flex;
+    flex-direction: column;
+    padding: theme.Variable('gap') theme.Variable('space');
+    font-size: 1rem;
+    border: theme.Variable('thickness') solid theme.Contrast('background', .1);
+    border-radius: inherit;
+}
