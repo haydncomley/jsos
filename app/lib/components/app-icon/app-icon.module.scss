@@ -1,0 +1,38 @@
+@use "easy-theme" as theme;
+
+.appIcon {
+    padding: .2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: theme.Variable('gap');
+    max-width: 100%;
+}
+
+.appIconImage {
+    height: 2.25rem;
+    width: 2.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        filter: drop-shadow(0 theme.Variable("thickness") theme.Variable("thickness") theme.Contrast("light", .1));
+    }
+}
+
+.appIconName {
+    font-size: .8rem;
+    margin: 0;
+    color: theme.Color("light");
+    text-shadow: 0 theme.Variable("thickness") theme.Variable("thickness") theme.Contrast("light", .25);
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

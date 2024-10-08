@@ -1,0 +1,144 @@
+@use "easy-theme" as theme;
+@use "/app/lib/theme/utility" as util;
+
+.filesApp {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .filesAppDragNotice {
+        position: absolute;
+        inset: 0;
+        background-color: var(--accent);
+        color: var(--accent-contrast);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+
+        p {
+            font-weight: bold;
+        }
+    }
+
+    &:not(.isDraggingFileOver) {
+        .filesAppDragNotice {
+            opacity: 0;
+        }
+    }
+}
+
+.filesAppRibbon {
+    display: flex;
+
+    .filesAppRibbonRoute {
+        display: flex;
+        width: 100%;
+        background: var(--accent);
+        border-radius: theme.Variable('radius-small');
+        padding: theme.Variable("gap");
+        gap: theme.Variable("gap");
+
+        .filesAppRibbonRouteItem {
+            font-size: .9rem;
+            background-color: transparent;
+            border: none;
+            padding: theme.Variable("gap") calc(theme.Variable("gap") * 1.5);
+            border-radius: theme.Variable('radius-small');
+            &:not(:last-child) {
+                background-color: theme.Color('background');
+                color: theme.Contrast('background');
+
+                &:hover {
+                    cursor: pointer;
+                    text-decoration: underline;
+                }
+            }
+
+            &:last-child {
+                background-color: theme.Contrast('background');
+                color: theme.Color('background');
+            }
+
+        }
+    }
+}
+
+.filesAppContent {
+    display: flex;
+    width: 100%;
+    margin-top: calc(theme.Variable('gap') * 1);
+    gap: calc(theme.Variable('gap') * 1);
+
+    .filesAppContentPreview {
+        display: flex;
+        flex-direction: column;
+        flex-basis: 50%;
+    }
+
+    .filesAppContentList {
+        display: flex;
+        flex-direction: column;
+        flex-basis: 100%;
+        overflow: hidden;
+        gap: calc(theme.Variable('gap') * 0.5);
+
+        .filesAppContentItem {
+            display: flex;
+            width: 100%;
+            border: none;
+            font-size: .9rem;
+            padding: theme.Variable("gap");
+            transition: .05s ease;
+            background: transparent;
+            text-align: left;
+            align-items: center;
+            border-radius: theme.Variable('radius-small');
+            border: theme.Variable('thickness') solid transparent;
+            background: theme.Contrast('background', .05);
+
+            .filesAppContentItemColWrap {
+                flex-basis: 2rem;
+            }
+    
+            .filesAppContentItemCol {
+                flex-basis: 15rem;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                text-transform: capitalize;
+            }
+
+            .filesAppContentItemIcon {
+                display: block;
+                width: 1.5rem;
+                height: 1.5rem;
+
+                &.isMask {
+                    background-color: var(--accent);
+                    border-radius: theme.Variable('radius-small');
+                    overflow: hidden;
+                }
+
+                img {
+                    height: 100%;
+                    width: 100%;
+                    object-fit: cover;
+                }
+            }
+    
+            &:hover{
+                cursor: pointer;
+                border-color: var(--accent);
+            }
+            
+            &.isCurrentFile {
+                background: theme.Color('background');
+                color: theme.Contrast('background');
+                border-color: theme.Color('background');
+            }
+        }
+    }
+}

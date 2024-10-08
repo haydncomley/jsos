@@ -1,0 +1,11 @@
+.desktopBackground {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+
+    img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+}

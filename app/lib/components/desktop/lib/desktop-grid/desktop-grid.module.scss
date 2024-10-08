@@ -1,0 +1,20 @@
+@use "easy-theme" as theme;
+
+.desktopGrid {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, .5rem);
+    grid-template-rows  : repeat(auto-fill, .5rem);
+    user-select: none;
+
+    & > *:not(.desktopGridBackplate) {
+        z-index: 1;
+    }
+}
+
+.desktopGridBackplate {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}

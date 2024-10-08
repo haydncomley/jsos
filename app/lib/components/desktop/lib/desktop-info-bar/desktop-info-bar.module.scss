@@ -1,0 +1,74 @@
+@use "easy-theme" as theme;
+@use "/app/lib/theme/utility" as util;
+
+@keyframes infoBarIn {
+    0% {
+        transform: translateY(-100%);
+    }
+    100% {
+        transform: translateY(0%);
+    }
+}
+
+.desktopInfoBar  {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    animation: infoBarIn .5s ease;
+}
+
+.desktopInfoBarItemTime {
+    font-size: .8rem;
+    margin: 0;
+    color: theme.Color("light");
+    text-shadow: 0 theme.Variable("thickness") theme.Variable("thickness") theme.Contrast("light", .25);
+}
+
+.desktopInfoBarItems {
+    display: flex;
+    padding: theme.Variable('gap');
+    margin-right: theme.Variable('gap');
+    gap: theme.Variable('gap');
+    border-radius: 0 0 theme.Variable('radius-small') theme.Variable('radius-small');
+    border-top: none;
+    @include util.glass;
+}
+
+.desktopInfoBarItemDivider {
+    flex-grow: 1;
+    width: theme.Variable("thickness");
+    background-color: theme.Color("light", .5);
+    display: block;
+}
+
+.desktopInfoBarItemActions {
+    display: flex;
+    gap: calc(theme.Variable('gap') * 0.75); 
+    align-items: center;
+
+    .desktopInfoBarItemActionFullscreen,
+    .desktopInfoBarItemActionClose {
+        height: .75rem;
+        width: .75rem;
+        border-radius: 50%;
+        background-color: theme.Color('success');
+        border: none;
+        cursor: pointer;
+
+        &:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 0 theme.Variable('thickness') theme.Color('warning', .2);
+        }
+    }
+    
+    .desktopInfoBarItemActionClose {
+        background-color: theme.Color('danger');
+
+        &:hover {
+            box-shadow: 0 0 0 theme.Variable('thickness') theme.Color('danger', .2);
+        }
+    }
+}

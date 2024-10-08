@@ -1,0 +1,27 @@
+@use "easy-theme" as theme;
+
+@mixin glass($color: "frost") {
+    border: theme.Variable('thickness') solid theme.Color($color, .1);
+    background: theme.Color($color, .25);
+    backdrop-filter: blur(theme.Variable("glass"));
+    box-shadow: 0 0 theme.Variable("thickness") theme.Contrast("light", .5);
+
+    @include theme.DarkMode {
+        border-color: theme.Color($color, .1);
+        background: theme.Color($color, .5);
+        box-shadow: 0 0 theme.Variable("thickness") theme.Contrast("light", .75);
+    }
+}
+
+@mixin boldGlass($color: "frost") {
+    border: theme.Variable('thickness') solid theme.Color($color, .2);
+    background: theme.Color($color, .4);
+    backdrop-filter: blur(theme.Variable("glass"));
+    box-shadow: 0 0 calc(theme.Variable("thickness") * 2) theme.Contrast("light", .5);
+
+    @include theme.DarkMode {
+        border-color: theme.Color($color, .25);
+        background: theme.Color($color, .75);
+        box-shadow: 0 0 calc(theme.Variable("thickness") * 2) theme.Contrast("light", .75);
+    }
+}

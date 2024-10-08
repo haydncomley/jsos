@@ -1,0 +1,40 @@
+@use "easy-theme" as theme;
+
+$light-theme: (
+    'background': (#FCFCFC, #202020),
+    'accent': (#f90992, #FCFCFC),
+    'frost': (#FCFCFC, #202020),
+    'selection': (#FCFCFC, #202020),
+    'light': (#FCFCFC, #202020),
+
+    'danger': (#ea3263, #FCFCFC),
+    'warning': (#eab632, #FCFCFC),
+    'success': (#32eaa7, #FCFCFC),
+);
+
+$dark-theme: (
+    'background': (#202020, #FCFCFC),
+    'frost': (#202020, #FCFCFC),
+    'selection': (#4f4f4f, #202020),
+);
+
+$variables: (
+    'space': 1rem,
+    'gap': .5rem,
+    'thickness': .1rem,
+    'radius': 1rem,
+    'radius-small': 0.5rem,
+    'glass': 2rem,
+);
+
+@include theme.UseTheme((
+    light: $light-theme,
+    dark: $dark-theme,
+    variables: $variables,
+));
+
+html, body {
+    background: theme.Color('background');
+    color: theme.Contrast('background');
+    -webkit-tap-highlight-color: transparent;
+}

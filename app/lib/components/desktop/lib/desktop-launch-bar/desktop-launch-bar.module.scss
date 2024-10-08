@@ -1,0 +1,25 @@
+@use "easy-theme" as theme;
+@use "/app/lib/theme/utility" as util;
+
+.desktopLaunchBar {
+    position: fixed;
+    bottom: theme.Variable('gap');
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .15s ease;
+
+    &.isHidden {
+        transform: translateY(150%);
+        opacity: 0;
+    }
+}
+
+.desktopLaunchBarItems {
+    display: flex;
+    padding: theme.Variable('gap');
+    gap: theme.Variable('gap');
+    border-radius: calc(theme.Variable('radius') * 1);
+    @include util.glass;
+}
