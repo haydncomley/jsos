@@ -5,7 +5,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-import './root.module.scss';
+import './root.scss';
 import { UserPreferencesProvider } from "./lib/contexts/user-preferences.context";
 import { SystemSettingsProvider } from "./lib/contexts/system-settings.context";
 import { FileSystemProvider } from "./lib/contexts/file-system.context";
