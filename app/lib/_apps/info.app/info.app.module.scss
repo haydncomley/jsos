@@ -14,12 +14,18 @@
     gap: theme.Variable('gap');
 }
 
+.infoAppTop {
+    display: flex;
+    flex-direction: column;
+}
+
 .infoAppTitle {
     font-size: 1.5rem;
 }
 
 .infoAppVersion {
-    font-size: 0.8rem;
+    font-size: 0.6rem;
+    opacity: 0.75;
 }
 
 .infoAppLabel {

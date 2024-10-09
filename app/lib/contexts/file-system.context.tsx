@@ -49,17 +49,24 @@ export const FileSystemProvider = ({ children }: PropsWithChildren<object>) => {
 
     }
 
-    const get = (path: string, parent?: FileSystemItems) => {
+    const get = (path: string, parent: FileSystemItems = {
+        id: '~',
+        name: '~',
+        data: {
+            root: files,
+        },
+        type: 'folder',
+        icon: '',
+    }) => {
         const pathSplit = sanitisePath(path).split('/').filter(Boolean);
-        const currentRoot = parent ?? files;
-        if (!pathSplit.length) return currentRoot;
+        if (!pathSplit.length) return parent;
 
-        if(!IsFileSystemItemAFolder(currentRoot)) {
+        if(!IsFileSystemItemAFolder(parent)) {
             return undefined;
         }
 
-        if (pathSplit.length > 0) {
-            return get(pathSplit.slice(1).join('/'), currentRoot.data[pathSplit[0]]);
+        if (pathSplit.length > 0 && parent.data[pathSplit[0]]) {
+            return get(pathSplit.slice(1).join('/'), parent.data[pathSplit[0]]);
         }
 
         return undefined;

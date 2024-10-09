@@ -7,8 +7,10 @@ import { name, version, author } from '../../../../package.json';
 export const InfoApp = ({}: ApplicationProps) => {
     return (
         <div className={styles.infoApp} data-window-drag>
-            <h1 className={styles.infoAppTitle}>{name}</h1>
-            <p className={styles.infoAppVersion}>{version}</p>
+            <div className={styles.infoAppTop}>
+                <h1 className={styles.infoAppTitle}>{name}</h1>
+                <p className={styles.infoAppVersion}>{version}</p>
+            </div>
 
             <p className={styles.infoAppCredit}>
                 <small className={styles.infoAppLabel}>Made By</small>

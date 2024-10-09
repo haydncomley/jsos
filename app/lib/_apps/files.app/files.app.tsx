@@ -127,21 +127,49 @@ export const FilesApp = ({
                 </div>
                 { currentFile ? (
                     <div className={styles.filesAppContentPreview}>
-                        <p>{ currentFile.name }</p>
-                        <p>{ currentFile.id }</p>
-                        { IsFileSystemItemAnImage(currentFile) ? (
-                            <button onClick={() => {
-                                preferences.desktop.setBackgroundImage(getFilePath(currentFile))
-                            }}>Set as wallpaper</button>
-                        ) : null }
-                        { IsFileSystemItemAnApplication(currentFile) ? (
-                            <button onClick={() => {
-                                system.run(currentFile)
-                            }}>Launch {currentFile.name} App</button>
-                        ) : null }
-                        <button onClick={() => {
-                                filesystem.set(getFilePath(currentFile), undefined)
-                            }}>Delete</button>
+                        <div className={styles.filesAppContentPreviewHeader}>
+                            <span className={styles.filesAppContentPreviewHeaderImage}>
+                                { IsFileSystemItemAnImage(currentFile) ? (
+                                    <img src={currentFile.data} alt={currentFile.name}></img>
+                                ) : (
+                                    <img src={filesystem.get(currentFile.icon || '/root/system/assets/icon-file')?.data as string} alt={currentFile.name}></img>
+                                ) }
+                            </span>
+                            <div className={styles.filesAppContentPreviewHeaderInfo}>
+                                <p>
+                                    { currentFile.name }
+                                    <small>{ currentFile.id }</small>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className={styles.filesAppContentPreviewActions}>
+                            { IsFileSystemItemAnImage(currentFile) ? (
+                                <button
+                                    data-button="primary"
+                                    onClick={() => {
+                                        preferences.desktop.setBackgroundImage(getFilePath(currentFile))
+                                    }}>
+                                    Set Wallpaper
+                                </button>
+                            ) : null }
+                            { IsFileSystemItemAnApplication(currentFile) ? (
+                                <button
+                                    data-button="primary"
+                                    onClick={() => {
+                                        system.run(currentFile)
+                                    }}>
+                                    Open
+                                </button>
+                            ) : null }
+                            <button 
+                                data-button="primary"
+                                onClick={() => {
+                                    filesystem.set(getFilePath(currentFile), undefined)
+                                }}>
+                                Delete
+                            </button>
+                        </div>
                     </div>
                 ) : null }
             </div>

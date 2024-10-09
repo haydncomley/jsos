@@ -42,7 +42,7 @@
         gap: theme.Variable("gap");
 
         .filesAppRibbonRouteItem {
-            font-size: .9rem;
+            font-size: .8rem;
             background-color: transparent;
             border: none;
             padding: theme.Variable("gap") calc(theme.Variable("gap") * 1.5);
@@ -76,6 +76,56 @@
         display: flex;
         flex-direction: column;
         flex-basis: 50%;
+        gap: theme.Variable('gap');
+
+        .filesAppContentPreviewHeader {
+            display: flex;
+            gap: theme.Variable('gap');
+            padding: theme.Variable('gap');
+            border: theme.Variable('thickness') solid theme.Contrast('background', .1);
+            border-radius: theme.Variable('radius-small');
+
+            .filesAppContentPreviewHeaderImage {
+                width: 2.5rem;
+                height: 2.5rem;
+                border-radius: theme.Variable('radius-small');
+                overflow: hidden;
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+            }
+
+            .filesAppContentPreviewHeaderInfo {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                
+                p {
+                    display: flex;
+                    flex-direction: column;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+
+                    small {
+                        font-size: 0.6rem;
+                        opacity: 0.75;
+                    }
+                }
+            }
+        }
+
+        .filesAppContentPreviewActions {
+            display: flex;
+            gap: theme.Variable('gap');
+            
+            button {
+                flex-grow: 1;
+            }
+        }
     }
 
     .filesAppContentList {
@@ -89,7 +139,7 @@
             display: flex;
             width: 100%;
             border: none;
-            font-size: .9rem;
+            font-size: .8rem;
             padding: theme.Variable("gap");
             transition: .05s ease;
             background: transparent;
@@ -101,6 +151,7 @@
 
             .filesAppContentItemColWrap {
                 flex-basis: 2rem;
+                flex-shrink: 0;
             }
     
             .filesAppContentItemCol {
@@ -117,7 +168,6 @@
                 height: 1.5rem;
 
                 &.isMask {
-                    background-color: var(--accent);
                     border-radius: theme.Variable('radius-small');
                     overflow: hidden;
                 }

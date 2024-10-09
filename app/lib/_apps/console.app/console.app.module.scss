@@ -7,4 +7,47 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    font-family: Space Mono, monospace;
+    font-size: .8rem;
+    border: theme.Variable('thickness') solid theme.Contrast('background', .1);
+    padding: theme.Variable('gap');
+    border-radius: inherit;
+
+    .consoleAppInput {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        border: theme.Variable('thickness') solid theme.Contrast('background', .1);
+        padding: theme.Variable('gap');
+        border-radius: inherit;
+        transition: .15s ease;
+
+        &.loading {
+            opacity: 0.5;
+        }
+
+        p {
+            font-size: 0.6rem;
+            opacity: 0.75;
+        }
+
+        input {
+            padding: 0;
+            margin: 0;
+            border: none;
+            background: transparent;
+            outline: none;
+            font-family: Space Mono, monospace;
+        }
+    }
+
+    .consoleAppLog {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        margin-top: auto;
+        padding: theme.Variable('gap');
+        overflow: auto;
+        white-space: pre;
+    }
 }

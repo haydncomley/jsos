@@ -61,8 +61,16 @@
 
 .desktopWindowAnchor {
     position: absolute;
-    height: theme.Variable('gap');
-    width: theme.Variable('gap');
+    height: theme.Variable('radius');
+    width: theme.Variable('radius');
+    border-radius: theme.Variable('radius') 0 theme.Variable('radius') 0;
+    border: calc(theme.Variable('thickness') * 2) solid transparent;
+    opacity: 0;
+    transition: .05s ease;
+    
+    &:hover {
+        opacity: 1;
+    }
     
     &.desktopWindowAnchorTop {
         top: 0;
@@ -82,17 +90,27 @@
 
     &.desktopWindowAnchorTop.desktopWindowAnchorLeft {
         cursor: nw-resize;
+        border-top-color: var(--accent);
+        border-left-color: var(--accent);
     }
 
     &.desktopWindowAnchorTop.desktopWindowAnchorRight {
         cursor: ne-resize;
+        border-radius: 0 theme.Variable('radius') 0 theme.Variable('radius');
+        border-top-color: var(--accent);
+        border-right-color: var(--accent);
     }
 
     &.desktopWindowAnchorBottom.desktopWindowAnchorLeft {
         cursor: sw-resize;
+        border-radius: 0 theme.Variable('radius') 0 theme.Variable('radius');
+        border-bottom-color: var(--accent);
+        border-left-color: var(--accent);
     }
 
     &.desktopWindowAnchorBottom.desktopWindowAnchorRight {
         cursor: se-resize;
+        border-bottom-color: var(--accent);
+        border-right-color: var(--accent);
     }
 }

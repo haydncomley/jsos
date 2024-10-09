@@ -10,6 +10,7 @@ const getCurrentDate = () => {
 export const DesktopInfoBar = () => {
     const { activeWindowId, closeProcess, maximizeWindow, windows, processes } = useContext(SystemSettingsContext)
     const activeWindow = windows.find(window => window.id === activeWindowId);
+    const activeProcess = processes.find(process => process.id === activeWindow?.processId);
     const [ date, setDate ] = useState('');
 
     useEffect(() => {
@@ -51,7 +52,9 @@ export const DesktopInfoBar = () => {
                         </p>
 
                         <div className={styles.desktopInfoBarItemActions}>
-                            <button className={styles.desktopInfoBarItemActionFullscreen} onClick={() => maximizeWindow(activeWindowId)}></button>
+                            { !activeProcess?.application.settings?.wrap ? (
+                                <button className={styles.desktopInfoBarItemActionFullscreen} onClick={() => maximizeWindow(activeWindowId)}></button>
+                            ) : null }
                             <button className={styles.desktopInfoBarItemActionClose} onClick={() => closeProcess(activeWindow.processId)}></button>
                         </div>
                     </>
