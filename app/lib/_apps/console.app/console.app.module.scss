@@ -12,6 +12,7 @@
     border: theme.Variable('thickness') solid theme.Contrast('background', .1);
     padding: theme.Variable('gap');
     border-radius: inherit;
+    user-select: text;
 
     .consoleAppInput {
         display: flex;

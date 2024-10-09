@@ -3,8 +3,8 @@ import { Desktop } from "~/lib/components/desktop";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
+    { title: "jsOS" },
+    { name: "description", content: "A Remix + React powered, web based desktop environment." },
   ];
 };
 

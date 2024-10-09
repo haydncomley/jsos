@@ -1,15 +1,20 @@
 import { ApplicationProps } from "~/lib/types";
 
 import styles from './console.app.module.scss';
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { runCommand } from "./lib/_commands";
 import classNames from "classnames";
+import { useArgs } from "~/lib/hooks/useArgs";
 
-// eslint-disable-next-line no-empty-pattern
 export const ConsoleApp = (props: ApplicationProps) => {
+    const { args } = useArgs(props.appArgs);
     const logRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
+    const mounted = useRef(false);
     const [ currentPath, setCurrentPath ] = useState('/root');
-    const [ lines, setLines ] = useState<string[]>([]);
+    // This is an anti-pattern - but it allows a console.app to be opened and commands to be iterated though when changing paths.
+    let executingPath = currentPath;
+    const [ lines, setLines ] = useState<string[]>(args.length ? [] : ['Hey there! Type "help" for a list of commands']);
     const [ commands, setCommands ] = useState<string[]>([]);
     const [ commandIndex, setCommandIndex ] = useState(0);
     const [ command, setCommand ] = useState('');
@@ -24,24 +29,54 @@ export const ConsoleApp = (props: ApplicationProps) => {
         })
     }
 
-    const send = async () => {
+    const sendCommand = async (wantedCommand: string) => {
         setCommandIndex(0)
-        setLines([...lines, `$ ${command}`]);
-        setCommands([...commands, command]);
+        setLines((prev) => [...prev, `$ ${wantedCommand}`]);
+        setCommands((prev) => [...prev, wantedCommand]);
         setIsCommandLoading(true);
         scrollDown();
-        const { line, newPath } = await runCommand(props, currentPath, command);
+        const { line, newPath, shouldClear } = await runCommand(props, executingPath, wantedCommand.trim());
+        if(newPath) executingPath = newPath ;
+        if (shouldClear) {
+            setLines([]);
+        }
         if (line) {
-            setLines([...lines, line]);
+            setLines((prev) => [...prev, line]);
         }
         if (newPath) setCurrentPath(newPath);
         setIsCommandLoading(false);
-        setCommand('');
         scrollDown();
     }
 
+    const send = async () => {
+        await sendCommand(command);
+        setCommand('');
+    }
+
+    useEffect(() => {
+        if (!inputRef.current) return;
+        inputRef.current.focus();
+
+    },[!inputRef.current])
+
+    useEffect(() => {
+        if (mounted.current || !args.length) return;
+        mounted.current = true;
+        
+        const doCommands = async () => {
+            if (!args.length) return;
+            for (let i = 0; i < args.length; i++) {
+                await sendCommand(args[i])
+            }
+        }
+
+        doCommands();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
     return (
-        <div className={styles.consoleApp} data-window-drag>
+        <div className={styles.consoleApp}>
+            <button data-window-bar data-window-drag></button>
             <div ref={logRef} className={styles.consoleAppLog}>
                 { lines.map((line, index) => (
                     <p key={index}>{line}</p>
@@ -56,6 +91,7 @@ export const ConsoleApp = (props: ApplicationProps) => {
                     {currentPath}
                 </p>
                 <input
+                    ref={inputRef}
                     type="text"
                     value={command}
                     onChange={(e) => setCommand(e.target.value)} 

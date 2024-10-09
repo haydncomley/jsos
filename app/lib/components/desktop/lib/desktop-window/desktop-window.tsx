@@ -25,6 +25,7 @@ export const DesktopWindow = ({
         openProcess,
         setWindowPosition,
         setWindowSizeAndPosition,
+        closeProcess,
     } = useContext(SystemSettingsContext)
     const fileSystemApi = useContext(FileSystemContext)
     const userPreferencesApi = useContext(UserPreferencesContext)
@@ -99,26 +100,47 @@ export const DesktopWindow = ({
         const Component = process.application.data;
         return (
             <Component 
+                process={process}
                 filesystem={fileSystemApi}
                 preferences={userPreferencesApi}
+                appArgs={process.args}
                 system={{
-                    run: (item) => {
+                    run: (item, args) => {
                         try {
                             if (IsFileSystemItemAnApplication(item)) {
-                                openProcess(item.id, item)
-                                return true
+                                return openProcess(item, undefined, args)
                             } else {
-                                return false
+                                return
                             }
                         } catch {
-                            return false
+                            return
                         }
+                    },
+                    window: {
+                        getActive: () => windows.find((x) => x.id === activeWindowId)
+                    },
+                    process: {
+                        close: (processId) => closeProcess(processId),
+                    },
+                    apps: {
+                        getConsole: () => {
+                            const fileOrFolder = fileSystemApi.get('/root/system/applications/app-console');
+                            return IsFileSystemItemAnApplication(fileOrFolder) ? fileOrFolder : undefined;
+                        },
+                        getViewer: () => {
+                            const fileOrFolder = fileSystemApi.get('/root/system/applications/app-viewer');
+                            return IsFileSystemItemAnApplication(fileOrFolder) ? fileOrFolder : undefined;
+                        },
+                        getEditor: () => {
+                            const fileOrFolder = fileSystemApi.get('/root/system/applications/app-editor');
+                            return IsFileSystemItemAnApplication(fileOrFolder) ? fileOrFolder : undefined;
+                        },
                     }
                 }}>
             </Component>
         );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [windows.length, processes.length, fileSystemApi, userPreferencesApi]);
+    }, [windows.length, processes.length, fileSystemApi, userPreferencesApi, activeWindowId]);
 
     return (
         <div

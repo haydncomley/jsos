@@ -38,7 +38,7 @@ export const DesktopIcon = ({
     const isOpen = !!processes.find(process => process.id === processId);
 
     const openFileSystemItem = () => {
-        if (IsFileSystemItemAnApplication(details)) openProcess(details.id, details);
+        if (IsFileSystemItemAnApplication(details)) openProcess(details, processId);
     }
 
     return (

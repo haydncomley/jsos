@@ -1,17 +1,27 @@
 import { useMemo, useState } from "react";
-import { ApplicationProps, FileSystemItem } from "~/lib/types";
-import { IsFileSystemItemAFile, IsFileSystemItemAFolder, IsFileSystemItemAnApplication, IsFileSystemItemAnImage } from "~/lib/utils/helpers.utils";
+import { Application, ApplicationProps, FileSystemItem } from "~/lib/types";
+import { IsFileSystemItemAFile, IsFileSystemItemAFolder, IsFileSystemItemAnApplication, IsFileSystemItemAnImage, IsFileSystemItemAScript } from "~/lib/utils/helpers.utils";
 
 import styles from './files.app.module.scss';
 import classNames from "classnames";
+import { AppIcon } from "~/lib/components/app-icon";
+import { useArgs } from "~/lib/hooks/useArgs";
 
 export const FilesApp = ({
     filesystem,
     preferences,
     system,
+    appArgs,
 }: ApplicationProps) => {
+    const { args } = useArgs(appArgs);
     const [ isDraggingFileOver, setIsDraggingFileOver] = useState(false);
-    const [ currentPath, setCurrentPath ] = useState('/root');
+    const wantedPath = args?.[0] || '/root';
+    const wantedDir = filesystem.get(wantedPath)
+    const console = system.apps.getConsole();
+    const viewer = system.apps.getViewer();
+    const editor = system.apps.getEditor();
+
+    const [ currentPath, setCurrentPath ] = useState(IsFileSystemItemAFolder(wantedDir) ? wantedPath : '/root');
     const [ currentFile, setCurrentFile ] = useState<FileSystemItem>();
 
     const currentDirPaths = currentPath.split('/').filter(Boolean);
@@ -34,6 +44,10 @@ export const FilesApp = ({
         }
 
         setCurrentFile(item);
+    }
+
+    const isOnDesktop = (app: Application) => {
+        return preferences.desktop.applications.find((x) => x.id === app.id);
     }
 
     return (
@@ -85,6 +99,14 @@ export const FilesApp = ({
                         )
                     }) }
                 </div>
+
+                { console ? (
+                    <button className={styles.filesAppRibbonConsole} onClick={() => {
+                        system.run(console, `cd ${currentPath}`)
+                    }}>
+                        <AppIcon icon={console.icon} name={console.name} hideName></AppIcon>
+                    </button>
+                ) : null }
             </div>
             <div className={styles.filesAppContent}>
                 <div className={styles.filesAppContentList}>
@@ -138,30 +160,84 @@ export const FilesApp = ({
                             <div className={styles.filesAppContentPreviewHeaderInfo}>
                                 <p>
                                     { currentFile.name }
-                                    <small>{ currentFile.id }</small>
+                                    <small>{ `${currentFile.id}${IsFileSystemItemAFile(currentFile) ? `.${currentFile.extension}` : ''}` }</small>
                                 </p>
                             </div>
                         </div>
 
-                        <div className={styles.filesAppContentPreviewActions}>
-                            { IsFileSystemItemAnImage(currentFile) ? (
+                        { (IsFileSystemItemAnApplication(currentFile) && console) ? (
+                            <div className={styles.filesAppContentPreviewActions}>
+                                    <button
+                                        data-button="primary"
+                                        onClick={() => {
+                                            system.run(console, `run ${getFilePath(currentFile)}\nexit`)
+                                        }}>
+                                        Open
+                                    </button>
+                                    <button
+                                        data-button="primary"
+                                        onClick={() => {
+                                            if (isOnDesktop(currentFile)) {
+                                                preferences.desktop.remove(`/root/system/applications/${currentFile.id}`)
+                                            } else {
+                                                preferences.desktop.add(`/root/system/applications/${currentFile.id}`)
+                                            }
+                                        }}>
+                                        { isOnDesktop(currentFile) ? 'Remove from Desktop' : 'Add to Desktop'  }
+                                    </button>
+                            </div>
+                        ) : null }
+
+                        { IsFileSystemItemAnImage(currentFile) ? (
+                            <div className={styles.filesAppContentPreviewActions}>
+                                { viewer ? (
                                 <button
                                     data-button="primary"
                                     onClick={() => {
-                                        preferences.desktop.setBackgroundImage(getFilePath(currentFile))
-                                    }}>
-                                    Set Wallpaper
-                                </button>
-                            ) : null }
-                            { IsFileSystemItemAnApplication(currentFile) ? (
-                                <button
-                                    data-button="primary"
-                                    onClick={() => {
-                                        system.run(currentFile)
+                                        system.run(viewer, getFilePath(currentFile))
                                     }}>
                                     Open
                                 </button>
-                            ) : null }
+                                ) : null }
+                                { IsFileSystemItemAnImage(currentFile) ? (
+                                    <button
+                                        data-button="primary"
+                                        onClick={() => {
+                                            preferences.desktop.setBackgroundImage(getFilePath(currentFile))
+                                        }}>
+                                        Set Wallpaper
+                                    </button>
+                                ) : null }
+                            </div>
+                        ) : null }
+
+                        { (IsFileSystemItemAScript(currentFile) && editor && console) ? (
+                            <div className={styles.filesAppContentPreviewActions}>
+                                <button
+                                    data-button="primary"
+                                    onClick={() => {
+                                        system.run(editor, currentFile.data)
+                                    }}>
+                                    Open
+                                </button>
+                                <button
+                                    data-button="primary"
+                                    onClick={() => {
+                                        system.run(console, `run ${getFilePath(currentFile)}\nexit`)
+                                    }}>
+                                    Run
+                                </button>
+                            </div>
+                        ) : null }
+
+                        <div className={styles.filesAppContentPreviewActions}>
+                            <button 
+                                data-button="primary"
+                                onClick={() => {
+                                    filesystem.download(getFilePath(currentFile))
+                                }}>
+                                Download
+                            </button>
                             <button 
                                 data-button="primary"
                                 onClick={() => {

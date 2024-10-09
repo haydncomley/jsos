@@ -1,6 +1,6 @@
 import { PropsWithChildren, createContext, useState } from "react";
 import { FileSystemFile, FileSystemAPI, FileSystemItems } from "../types";
-import { GetFileAsFileItemType, IsFileSystemItemAFolder } from "../utils/helpers.utils";
+import { GetFileAsFileItemType, IsFileSystemItemAFile, IsFileSystemItemAFolder } from "../utils/helpers.utils";
 import { DEFAULT_SESSION } from "../data/default-session.data";
 import { DEFAULT_SYSTEM } from "../data/default-system.data";
 
@@ -16,6 +16,7 @@ export const FileSystemContext = createContext<FileSystemAPI>({
     get:  () => undefined,
     exists:  () => false,
     upload:  () => undefined,
+    download:  () => undefined,
    operations: 0,
 });
 
@@ -106,9 +107,10 @@ export const FileSystemProvider = ({ children }: PropsWithChildren<object>) => {
             const newFile: FileSystemFile = {
                 type: 'file',
                 id: pathSplit[pathSplit.length - 1],
-                name: file.name,
+                name: file.name.slice(0, file.name.lastIndexOf('.')),
                 icon: '',
                 data: url,
+                extension: file.name.slice(file.name.lastIndexOf('.') + 1),
                 fileType: GetFileAsFileItemType(file),
             };
             set(path, newFile)
@@ -120,6 +122,17 @@ export const FileSystemProvider = ({ children }: PropsWithChildren<object>) => {
         }
     }
 
+    const download = (path: string) => {
+        const fileOrFolder = get(path);
+        if (!IsFileSystemItemAFile(fileOrFolder)) return;
+        const aElement = document.createElement('a');
+        aElement.href = fileOrFolder.data;
+        aElement.download = `${fileOrFolder.name}.${fileOrFolder.extension}`;
+        document.body.appendChild(aElement);
+        aElement.click();
+        aElement.remove();
+    }
+
     return (
         <FileSystemContext.Provider value={{ 
             root: files,
@@ -127,6 +140,7 @@ export const FileSystemProvider = ({ children }: PropsWithChildren<object>) => {
             get,
             exists,
             upload,
+            download,
             operations,
          }}>
             {children}

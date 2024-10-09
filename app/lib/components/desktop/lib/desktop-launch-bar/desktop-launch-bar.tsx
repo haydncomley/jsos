@@ -20,8 +20,8 @@ export const DesktopLaunchBar = () => {
                 {
                     [...processes].map((process) => (
                         <DesktopIcon
-                            key={process.application.name}
-                            processId={process.application.id}
+                            key={process.id}
+                            processId={process.id}
                             details={process.application}>
                         </DesktopIcon>
                     ))

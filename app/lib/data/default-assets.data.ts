@@ -8,6 +8,7 @@ export const DEFAULT_ASSETS: Record<string, FileSystemItems> = {
         icon: '',
         data: '/assets/icon-folder.webp',
         fileType: 'image',
+        extension: 'webp',
     },
     "icon-file": {
         type: 'file',
@@ -16,6 +17,7 @@ export const DEFAULT_ASSETS: Record<string, FileSystemItems> = {
         icon: '',
         data: '/assets/icon-file.webp',
         fileType: 'image',
+        extension: 'webp',
     },
     "icon-app-info": {
         type: 'file',
@@ -24,6 +26,7 @@ export const DEFAULT_ASSETS: Record<string, FileSystemItems> = {
         icon: '',
         data: '/assets/icon-app-info.webp',
         fileType: 'image',
+        extension: 'webp',
     },
     "icon-app-files": {
         type: 'file',
@@ -32,6 +35,7 @@ export const DEFAULT_ASSETS: Record<string, FileSystemItems> = {
         icon: '',
         data: '/assets/icon-app-files.webp',
         fileType: 'image',
+        extension: 'webp',
     },
     "icon-app-console": {
         type: 'file',
@@ -40,14 +44,25 @@ export const DEFAULT_ASSETS: Record<string, FileSystemItems> = {
         icon: '',
         data: '/assets/icon-app-console.webp',
         fileType: 'image',
+        extension: 'webp',
     },
-    "icon-app-web": {
+    "icon-app-viewer": {
         type: 'file',
-        id: 'icon-app-web',
-        name: 'App Icon - Web',
+        id: 'icon-app-viewer',
+        name: 'App Icon - Viewer',
         icon: '',
-        data: '/assets/icon-app-web.webp',
+        data: '/assets/icon-app-viewer.webp',
         fileType: 'image',
+        extension: 'webp',
+    },
+    "icon-app-editor": {
+        type: 'file',
+        id: 'icon-app-editor',
+        name: 'App Icon - Editor',
+        icon: '',
+        data: '/assets/icon-app-editor.webp',
+        fileType: 'image',
+        extension: 'webp',
     },
     "wallpaper-default": {
         type: 'file',
@@ -56,5 +71,15 @@ export const DEFAULT_ASSETS: Record<string, FileSystemItems> = {
         icon: '',
         data: '/assets/background-image-1.webp',
         fileType: 'image',
-    }
+        extension: 'webp',
+    },
+    "wallpaper-experiment": {
+        type: 'file',
+        id: 'wallpaper-experiment',
+        name: 'Wallpaper experiment',
+        icon: '',
+        data: '/assets/background-image-2.webp',
+        fileType: 'image',
+        extension: 'webp',
+    },
 }

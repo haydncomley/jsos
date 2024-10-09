@@ -2,7 +2,6 @@ import { IsFileSystemItemAFolder } from "~/lib/utils/helpers.utils";
 import { Command } from "./types";
 
 export const LS: Command = async ({ filesystem }, path, command) => {
-    console.log(command);
     const currentRoute = filesystem.get(command || path);
 
     if(!IsFileSystemItemAFolder(currentRoute)) {

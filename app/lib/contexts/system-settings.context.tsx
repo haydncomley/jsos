@@ -4,14 +4,14 @@ import { GetScreenBounds } from "../utils/helpers.utils";
 
 interface SystemSettings {
     processes: Process[];
-    openProcess: (processId: string, application: Application) => void;
+    openProcess: (application: Application, processId?: string, args?: string) => string;
     closeProcess: (processId: string) => void;
     windows: Window[];
     activeWindowId?: string;
-    openWindow: (processId: string) => void;
+    openWindow: (processId: string, args?: string) => void;
     closeWindow: (windowId: string) => void;
     maximizeWindow: (windowId: string) => void;
-    focusWindow: (windowId?: string) => void;
+    focusWindow: (windowId?: string, args?: string) => void;
     setWindowSizeAndPosition: (windowId: string, left: number, top: number, width: number, height: number) => void;
     setWindowPosition: (windowId: string, left: number, top: number) => void;
     setWindowSize: (windowId: string, width: number, height: number) => void;
@@ -21,7 +21,7 @@ export const SystemSettingsContext = createContext<SystemSettings>({
     processes: [],
     windows: [],
     closeProcess: () => {},
-    openProcess: () => {},
+    openProcess: () => '',
     closeWindow: () => {},
     openWindow: () => {},
     maximizeWindow: () => {},
@@ -52,46 +52,50 @@ export const SystemSettingsProvider = ({ children }: PropsWithChildren<object>) 
     const [ windows, setWindows ] = useState<SystemSettings['windows']>([]);
     const [ activeWindowId, setActiveWindowId ] = useState<SystemSettings['activeWindowId']>();
 
-    const openProcess = (processId: string, application: Application) => {
-        const processExists = processes.find(process => process.id === processId);
+    const openProcess = (application: Application, processId?: string, args?: string) => {
+        const newProcessId = processId || (application.settings?.multiple ? `${Math.random()}` : application.id);
+        const processExists = processes.find(process => process.id === newProcessId);
         if (processExists) {
-            const windowExists = windows.find(window => window.processId === processId);
+            const windowExists = windows.find(window => window.processId === newProcessId);
             if (windowExists) {
-                focusWindow(windowExists.id);
+                focusWindow(windowExists.id, args);
             } else {
-                openWindow(processId);
+                openWindow(newProcessId, args);
             }
-            return;
+            return processExists.id;
         }
 
-        setProcesses([
-            ...processes,
+        setProcesses((prev) => [
+            ...prev,
             {
-                id: processId,
-                application
+                id: newProcessId,
+                application,
+                args
             }
         ]);
 
         if (!application.settings?.headless) {
-            openWindow(processId);
+            openWindow(newProcessId, args);
         }
+
+        return newProcessId;
     }
 
     const closeProcess = (processId: string) => {
-        setProcesses(processes.filter(process => process.id !== processId));
-        setWindows(windows.filter(window => window.processId !== processId));
+        setProcesses((prev) => prev.filter(process => process.id !== processId));
+        setWindows((prev) => prev.filter(window => window.processId !== processId));
         if (activeWindowId === processId) {
             setActiveWindowId(undefined);
         }
     }
 
-    const openWindow = (processId: string) => {
+    const openWindow = (processId: string, args?: string) => {
         const bounds = GetScreenBounds();
         const width = (bounds.height / 2) * 1.7;
         const height = (bounds.height / 2);
 
-        setWindows([
-            ...windows,
+        setWindows((prev) => [
+            ...prev,
             {
                 id: processId,
                 processId,
@@ -99,27 +103,28 @@ export const SystemSettingsProvider = ({ children }: PropsWithChildren<object>) 
                 height,
                 left: bounds.width / 2 - width / 2,
                 top: bounds.height / 2 - height / 2,
-                zIndex: zIndexCount++
+                zIndex: zIndexCount++,
+                args,
             }
         ]);
         setActiveWindowId(processId);
     }
 
     const closeWindow = (windowId: string) => {
-        setWindows(windows.filter(window => window.id !== windowId));
+        setWindows((prev) => prev.filter(window => window.id !== windowId));
         if (activeWindowId === windowId) {
             setActiveWindowId(undefined);
         }
     }
 
     const maximizeWindow = (windowId: string) => {
-        setWindows(windows.map(window => window.id === windowId ? {
+        setWindows((prev) => prev.map(window => window.id === windowId ? {
             ...window,
             ...getFullscreenBounds(),
         } : window));
     }
 
-    const focusWindow = (windowId?: string) => {
+    const focusWindow = (windowId?: string, args?: string) => {
         if (!windowId) {
             setActiveWindowId(undefined);
             return;
@@ -129,6 +134,7 @@ export const SystemSettingsProvider = ({ children }: PropsWithChildren<object>) 
         setWindows((prev) => {
             const windowIndex = prev.findIndex((x) => x.id === windowId);
             prev[windowIndex].zIndex = ++zIndexCount;
+            if(args) prev[windowIndex].args = args;
             return prev;
         });
     }

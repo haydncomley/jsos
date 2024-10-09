@@ -14,14 +14,12 @@ export const DesktopGrid = () => {
     return (
         <div className={styles.desktopGrid}>
             <div className={styles.desktopGridBackplate} onClick={() => focusWindow()}></div>
-
             {
                 desktop.applications.map((application, index) => (
                     <DesktopIcon
-                        key={application.name}
+                        key={index}
                         top={2}
                         left={2 + (index * 10)}
-                        processId={application.id}
                         details={application}>
                     </DesktopIcon>
                 ))

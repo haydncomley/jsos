@@ -19,9 +19,29 @@ export function IsFileSystemItemAFolder(item?: FileSystemItem): item is FileSyst
     return item?.type === 'folder';
 }
 
+export function IsFileSystemItemAScript(item?: FileSystemItem): item is FileSystemFile & { fileType: 'script' } {
+  if (!IsFileSystemItemAFile(item)) return false;
+  return item?.fileType === 'script';
+}
+
+export function IsFileSystemItemADocument(item?: FileSystemItem): item is FileSystemFile & { fileType: 'document' } {
+  if (!IsFileSystemItemAFile(item)) return false;
+  return item?.fileType === 'document';
+}
+
 export function IsFileSystemItemAnImage(item?: FileSystemItem): item is FileSystemFile & { fileType: 'image' } {
   if (!IsFileSystemItemAFile(item)) return false;
   return item?.fileType === 'image';
+}
+
+export function IsFileSystemItemAVideo(item?: FileSystemItem): item is FileSystemFile & { fileType: 'video' } {
+  if (!IsFileSystemItemAFile(item)) return false;
+  return item?.fileType === 'video';
+}
+
+export function IsFileSystemItemAnPieceOfMedia(item?: FileSystemItem): item is FileSystemFile & { fileType: 'image' | 'video' } {
+  if (!IsFileSystemItemAFile(item)) return false;
+  return IsFileSystemItemAnImage(item) || IsFileSystemItemAVideo(item);
 }
 
 export const GetFileAsFileItemType = (file: File): FileSystemFile['fileType'] => {

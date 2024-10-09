@@ -8,6 +8,11 @@
     text-align: center;
     gap: theme.Variable('gap');
     max-width: 100%;
+    transition: .15s ease;
+
+    &:active {
+        transform: scale(0.9);
+    }
 }
 
 .appIconImage {

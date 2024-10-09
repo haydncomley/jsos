@@ -4,7 +4,6 @@ import { Command } from "./types";
 export const CD: Command = async ({ filesystem }, path, command) => {
     const commandArgs = command.split(' ');
     const wantedPath = commandArgs[0].trim();
-    console.log(command)
     const currentRoute = filesystem.get(path);
 
     if(!IsFileSystemItemAFolder(currentRoute)) {
